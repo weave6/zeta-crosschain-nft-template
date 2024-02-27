@@ -2,7 +2,6 @@
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@zetachain/protocol-contracts/contracts/evm/tools/ZetaInteractor.sol";
 import "@zetachain/protocol-contracts/contracts/evm/interfaces/ZetaInterfaces.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -27,16 +26,24 @@ contract nftTemplate is
     ZetaTokenConsumer private immutable _zetaConsumer;
     IERC20 internal immutable _zetaToken;
 
+    address public _launchpadAddress;
+
     constructor(
         address connectorAddress,
         address zetaTokenAddress,
-        address zetaConsumerAddress
+        address zetaConsumerAddress,
+        address launchpadAddress
     ) ZetaInteractor(connectorAddress) {
         _zetaToken = IERC20(zetaTokenAddress);
         _zetaConsumer = ZetaTokenConsumer(zetaConsumerAddress);
 
+        _launchpadAddress = launchpadAddress;
         // start with one, if you want start with zero, comment this line
         tokenIds.increment();
+    }
+
+    function changeLaunchpadAddress(address launchpadAddress) public onlyOwner {
+        _launchpadAddress = launchpadAddress;
     }
 
     function mint(
@@ -45,8 +52,7 @@ contract nftTemplate is
     ) public returns (uint256[] memory) {
         // only mint in zeta-testnet
         //require(block.chainid == 7001);
-
-        //TODO: Check only mint from the launchpad contract
+        require(msg.sender == _launchpadAddress, "Only launchpad can mint");
         require(amount > 0, "Amount must be greater than 0");
 
         uint256[] memory ids = new uint256[](amount);
