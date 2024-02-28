@@ -104,6 +104,11 @@ contract nftTemplate is
         if (!_isValidChainId(destinationChainId))
             revert InvalidDestinationChainId();
 
+        require(
+            _isApprovedOrOwner(_msgSender(), token),
+            "Caller is not owner nor approved"
+        );
+
         uint256 crossChainGas = 2 * (10 ** 18);
         uint256 zetaValueAndGas = _zetaConsumer.getZetaFromEth{
             value: msg.value
