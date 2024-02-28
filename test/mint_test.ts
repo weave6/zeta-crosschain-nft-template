@@ -146,10 +146,7 @@ describe("Launchpad", function () {
         sender.address,
         eth(10),
         280,
-        1,
-        0,
-        Date.now() + 86400000,
-        false
+        1
       );
     // Mint tokens
     const amount = 1;
@@ -160,5 +157,14 @@ describe("Launchpad", function () {
     // Check the balance of the sender
     const balance = await nft.balanceOf(sender.address);
     expect(balance).to.equal(amount);
+  });
+
+  it("should be ended", async function () {
+    await launchpad.connect(sender).switchEndLaunchpad(launchpadId);
+    // Mint tokens
+    const amount = 1;
+    await expect(
+      launchpad.connect(sender).mint(launchpadId, amount, { value: eth(10) })
+    ).to.be.revertedWith("Launchpad is ended");
   });
 });

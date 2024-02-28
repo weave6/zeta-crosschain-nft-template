@@ -188,7 +188,7 @@ contract Launchpad is ReentrancyGuard, Ownable {
         uint256 launchpadId,
         uint256 amount
     ) public payable nonReentrant returns (uint256[] memory) {
-        require(_launchpad[launchpadId].isEnded, "Launchpad is ended");
+        require(!_launchpad[launchpadId].isEnded, "Launchpad is ended");
         launchInfo storage info = _launchpad[launchpadId];
 
         if (info.onlyWhitelist) {
@@ -235,7 +235,7 @@ contract Launchpad is ReentrancyGuard, Ownable {
 
     function addAdmin(address admin) public onlyAdmin {
         _isAdmin[admin] = true;
-        emit AdminRemoveEvent(msg.sender, admin);
+        emit AdminAddEvent(msg.sender, admin);
     }
 
     function removeAdmin(address admin) public onlyAdmin {
@@ -255,7 +255,7 @@ contract Launchpad is ReentrancyGuard, Ownable {
         emit SwitchWhiteListEvent(
             msg.sender,
             launchpadId,
-            !_launchpad[launchpadId].onlyWhitelist
+            _launchpad[launchpadId].onlyWhitelist
         );
     }
 
