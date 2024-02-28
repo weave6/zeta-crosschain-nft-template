@@ -205,11 +205,6 @@ contract Launchpad is ReentrancyGuard, Ownable {
         );
 
         require(
-            amount <= info.maxAmountPerWallet,
-            "Amount is greater than max amount per wallet"
-        );
-
-        require(
             info.mintedAmount + amount <= info.maxAmount,
             "Amount is reached max amount"
         );
@@ -218,8 +213,6 @@ contract Launchpad is ReentrancyGuard, Ownable {
             info._userAmount[msg.sender] + amount <= info.maxAmountPerWallet,
             "Amount is greater than max amount per wallet"
         );
-
-        // uint256 value = msg.value;
 
         uint256 mint_price = info.tokenPrice * amount;
 
